@@ -2,6 +2,12 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
+    //create custom fonts
+    private let boldFont23 = UIFont(name:"YSDisplay-Bold", size:23)
+    private let boldFont18 = UIFont(name:"YSDisplay-Bold", size:18)
+    private let mediumFont20 = UIFont(name:"YSDisplay-Medium", size:20)
+    private let mediumFont16 = UIFont(name:"YSDisplay-Medium", size:16)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
