@@ -75,13 +75,11 @@ final class MovieQuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        imageView.layer.cornerRadius = 20
         let currentQuestion = questions[currentQuestionIndex]
-        show(quiz: QuizStepViewModel(
-            image: UIImage(named: currentQuestion.image) ?? UIImage(),
-            question: currentQuestion.text,
-            questionNumber: "\(currentQuestionIndex + 1)/\(questions.count)"))
-    }
-    
+        let viewModel = convert(model: currentQuestion)
+        show(quiz: viewModel)
+        }
     //create yesButton
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
@@ -107,7 +105,6 @@ final class MovieQuizViewController: UIViewController {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
-        imageView.layer.cornerRadius = 20
     }
     
     private func showAnswerResult(isCorrect: Bool) {
@@ -116,7 +113,6 @@ final class MovieQuizViewController: UIViewController {
         }
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
-        imageView.layer.cornerRadius = 20
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -135,7 +131,7 @@ final class MovieQuizViewController: UIViewController {
             //после результатов рамка картинки исчезает
             imageView.layer.borderWidth = 0
             //обнуляем счетчик правильных ответов по итогу результатов
-            self.correctAnswers = 0
+            correctAnswers = 0
         } else {
             currentQuestionIndex += 1
             let nextQuestion = questions[currentQuestionIndex]
