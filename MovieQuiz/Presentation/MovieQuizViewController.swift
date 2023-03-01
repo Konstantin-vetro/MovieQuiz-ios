@@ -64,6 +64,8 @@ final class MovieQuizViewController: UIViewController {
             text: "Рейтинг этого фильма больше чем 6?",
             correctAnswer: false)
     ]
+    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet weak var noButton: UIButton!
     
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
@@ -114,10 +116,13 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
+        //выключаем кнопки до начала смены вопроса, чтобы не было повторных нажатий
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
         }
+        
     }
     
     private func showNextQuestionOrResults() {
@@ -139,7 +144,9 @@ final class MovieQuizViewController: UIViewController {
             //при переходе на следующий вопрос рамка картинки исчезает
             imageView.layer.borderWidth = 0
             show(quiz: viewModel)
-            
+            //после отображения данных включаем кнопки
+            yesButton.isEnabled = true
+            noButton.isEnabled = true
         }
     }
     
