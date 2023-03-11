@@ -119,7 +119,8 @@ final class MovieQuizViewController: UIViewController {
         //выключаем кнопки до начала смены вопроса, чтобы не было повторных нажатий
         yesButton.isEnabled = false
         noButton.isEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
             self.showNextQuestionOrResults()
         }
         
@@ -137,6 +138,8 @@ final class MovieQuizViewController: UIViewController {
             imageView.layer.borderWidth = 0
             //обнуляем счетчик правильных ответов по итогу результатов
             correctAnswers = 0
+            yesButton.isEnabled = true
+            noButton.isEnabled = true
         } else {
             currentQuestionIndex += 1
             let nextQuestion = questions[currentQuestionIndex]
@@ -156,7 +159,8 @@ final class MovieQuizViewController: UIViewController {
             message: result.text,
             preferredStyle: .alert)
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self = self else { return }
             self.currentQuestionIndex = 0
             
             // заново показываем первый вопрос
