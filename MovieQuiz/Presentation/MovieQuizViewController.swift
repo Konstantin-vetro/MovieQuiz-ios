@@ -14,7 +14,7 @@ final class MovieQuizViewController: UIViewController {
     private var correctAnswers: Int = 0
     
     private let questionsAmount: Int = 10           //общее количество вопросов для квиза
-    private let questionFactory: QuestionFactory = QuestionFactory()    //фабрика вопросов
+    private let questionFactory: QuestionFactoryProtocol = QuestionFactory()    //фабрика вопросов реализуется протоколом: менять на web здесь
     private var currentQuestion: QuizQuestion?                          //текущий вопрос
     // MARK: - Lifecycle
     override func viewDidLoad() {
