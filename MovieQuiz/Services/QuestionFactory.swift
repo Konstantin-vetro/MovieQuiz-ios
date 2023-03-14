@@ -44,10 +44,18 @@ class QuestionFactory: QuestionFactoryProtocol {
             correctAnswer: false)
     ]
     
-    func requestNextQuestion() -> QuizQuestion? {
-        guard let index = (0..<questions.count).randomElement() else {
-            return nil
+    weak var delegate: QuestionFactoryDelegate?   //создаем делегат с которым общается фабрика
+    
+    init(delegate: QuestionFactoryDelegate) {      //инъекция зависимостей через инициализатор
+        self.delegate = delegate
+    }
+    
+    func requestNextQuestion() {
+        guard let index = (0..<questions.count).randomElement() else {  //распаковываем индекс у сабскрипта и получаем рандомный индекс массива
+            delegate?.didReceiveNextQuestion(question: nil)             //получаем nil если индекс пустой в методе протокола делегата
+            return
         }
-        return questions[safe: index]
+        let question = questions[safe: index]                           //создаем переменную  индекса массива реализованную через сабскрипт
+        delegate?.didReceiveNextQuestion(question: question)            //делегатом получаем индекс массива
     }
 }
