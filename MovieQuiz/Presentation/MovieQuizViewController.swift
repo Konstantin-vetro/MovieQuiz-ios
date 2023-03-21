@@ -98,7 +98,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
             statisticService?.store(correct: correctAnswers, total: questionsAmount)
-            let text = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService!.gamesCount)\nРекорд: \(statisticService!.bestGame.correct)/\(statisticService!.bestGame.total) (\(statisticService!.bestGame.date.dateTimeString))\nСредняя точность: \(String(format: "%.2f", statisticService!.totalAccuracy))%"
+            let text = "Ваш результат: \(correctAnswers)/\(questionsAmount)\nКоличество сыгранных квизов: \(statisticService?.gamesCount ?? 0)\nРекорд: \(statisticService?.bestGame.correct ?? 0)/\(statisticService?.bestGame.total ?? 0) (\(statisticService?.bestGame.date.dateTimeString ?? "")\nСредняя точность: \(String(format: "%.2f", statisticService?.totalAccuracy ?? 0))%"
             let alertModel = AlertModel(
                 title: "Этот раунд окончен!",
                 message: text,
