@@ -105,16 +105,22 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="rbE-22-Tms">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Background"/>
                         <constraints>
                             <constraint firstItem="12P-Kw-zQk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="aSr-77-o7w"/>
+                            <constraint firstItem="rbE-22-Tms" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gvg-e2-URp"/>
                             <constraint firstAttribute="trailing" secondItem="12P-Kw-zQk" secondAttribute="trailing" constant="20" id="gy6-AA-lI7"/>
+                            <constraint firstItem="rbE-22-Tms" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lui-sa-txa"/>
                             <constraint firstItem="12P-Kw-zQk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="xtw-kS-crW"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="rbE-22-Tms" id="Zbt-bJ-WlE"/>
                         <outlet property="counterLabel" destination="X7u-hf-98k" id="aTu-Sd-37V"/>
                         <outlet property="imageView" destination="aT0-OJ-XjC" id="E51-AG-nSl"/>
                         <outlet property="noButton" destination="Dev-XX-3X6" id="Oqp-cF-IjW"/>
