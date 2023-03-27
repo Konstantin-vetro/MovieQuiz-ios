@@ -3,7 +3,6 @@
 //  MovieQuiz
 //
 
-///Загрузчик фильмов
 import Foundation
 //протокол для загрузчика фильмов
 protocol MoviesLoadingProtocol {
@@ -17,7 +16,7 @@ struct MoviesLoader: MoviesLoadingProtocol {
     // URL
     private var mostPopularMoviesUrl: URL {
         // получаем API
-        let api = "https://imdb-api.com/en/API/MostPopularMovies/k_y4y8zf62"
+        let api = "https://imdb-api.com/en/API/Top250Movies/k_y4y8zf62"
         //проверка на преобразование строки
         guard let url = URL(string: api) else {
             preconditionFailure("Не удалось создать URL-адрес mostPopularMoviesUrl")
