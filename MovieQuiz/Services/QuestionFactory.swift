@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+///Фабрика вопросов работающая с мок-данными и данные через интернет
 class QuestionFactory: QuestionFactoryProtocol {
 //    private let questions: [QuizQuestion] = [
 //        QuizQuestion(
@@ -43,9 +44,9 @@ class QuestionFactory: QuestionFactoryProtocol {
 //            text: "Рейтинг этого фильма больше чем 6?",
 //            correctAnswer: false)
 //    ]
-    private let moviesLoader: MoviesLoadingProtocol //загрузчик фильмов
-    private var movies: [MostPopularMovie] = []     //хранилище фильмов с сервера
-    private weak var delegate: QuestionFactoryDelegate?   //создаем делегат с которым общается фабрика
+    private let moviesLoader: MoviesLoadingProtocol         //загрузчик фильмов
+    private var movies: [MostPopularMovie] = []             //хранилище фильмов с сервера
+    private weak var delegate: QuestionFactoryDelegate?     //создаем делегат с которым общается фабрика
     
     init(moviesLoader: MoviesLoadingProtocol, delegate: QuestionFactoryDelegate) {      //инъекция зависимостей через инициализатор
         self.moviesLoader = moviesLoader
@@ -66,37 +67,44 @@ class QuestionFactory: QuestionFactoryProtocol {
             }
         }
     }
-    
+    //метод получения следующего вопроса
     func requestNextQuestion() {
         //запускаем код в другом потоке
         DispatchQueue.global().async { [weak self] in
             guard let self else { return }
-            //выбираем произвольный элемент из массива
-            let index = (0..<self.movies.count).randomElement() ?? 0
             
-            guard let movie = self.movies[safe: index] else { return}
-            // обработка ошибки загрузки данных из URL
-            var imageData = Data()
-            
-            do {
-                imageData = try Data(contentsOf: movie.resizedImageURL)
-            } catch {
-                print("Ошибка загрузки изображения")
-            }
-            // создание вопроса, определение его корректности
-            let rating = Float(movie.rating) ?? 0
-            
-            let text = "Рейтинг этого фильма больше, чем 7?"
-            let correctAnswer = rating > 7
-            //создание модели вопроса
-            let question = QuizQuestion(image: imageData,
-                                        text: text,
-                                        correctAnswer: correctAnswer)
-            //возвращаемся в главный поток через делегат
+            let index = (0..<self.movies.count).randomElement() ?? 0    //выбираем произвольный элемент из массива
+            self.requestNextQuestionByIndex(by: index)
+        }
+    }
+    //метод получения вопроса по индексу
+    func requestNextQuestionByIndex(by index: Int) {
+        guard let movie = self.movies[safe: index] else { return}
+        // обработка ошибки загрузки данных из URL
+        var imageData = Data()
+        
+        do {
+            imageData = try Data(contentsOf: movie.resizedImageURL)
+        } catch {
             DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                self.delegate?.didReceiveNextQuestion(question: question)
+                self?.delegate?.failedToUploadImage(for: index)     //ошибка загрузки изображения
             }
+            return 
+        }
+        // проверка на корректность ответа
+        let rating = Float(movie.rating) ?? 0
+        
+        let text: String = "Рейтинг этого фильма больше, чем 9"
+        let correctAnswer = rating > 9
+        
+        //создание модели вопроса
+        let question = QuizQuestion(image: imageData,
+                                    text: text,
+                                    correctAnswer: correctAnswer)
+        //переход на следующий вопрос через делегат
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.delegate?.didReceiveNextQuestion(question: question)
         }
     }
 }
