@@ -1,13 +1,14 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertDelegate {
-    //аутлеты кнопок
+    // MARK: - UI-Outlets
     @IBOutlet weak var yesButton: UIButton!
     @IBOutlet weak var noButton: UIButton!
-    //аутлеты ui-элементов
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
+    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+    // MARK: - Private variables
     //индекс текущего вопроса
     private var currentQuestionIndex: Int = 0
     //счетчик правильных ответов
@@ -26,12 +27,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.layer.cornerRadius = 20
-        
-        questionFactory = QuestionFactory(delegate: self)   //задаем делегат фабрике вопросов
-        alertResult = AlertPresenter(delegate: self)        //задаем делегат алерту
+        imageView.layer.cornerRadius = 20   //скругление углов изображения по радиусу 20
+        showLoadingIndicator()
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)   //делегат фабрики вопросов
+        alertResult = AlertPresenter(delegate: self)        // делегат алерта
         statisticService = StatisticServiceImplementation()
-        questionFactory?.requestNextQuestion()
+        questionFactory?.loadData()     //загрузка данных
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -47,38 +48,40 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - AlertDelegate
     
     func presentAlertController(_ alertController: UIAlertController) {
-        //показываем алерт
-        present(alertController, animated: true)
+        present(alertController, animated: true)        //показ алерта
     }
     // MARK: - Actions
-    //create yesButton
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         guard let currentQuestion = currentQuestion else { return }
         let givenAnswer = true
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
-    //create noButton
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         guard let currentQuestion = currentQuestion else { return }
         let givenAnswer = false
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     // MARK: - Private functions
-    //метод конвертации
+    /// Метод конвертации
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)") // высчитываем номер вопроса
     }
-    //метод показа модели
+    /// Метод показа модели
     private func show(quiz step: QuizStepViewModel) {
         //заполнение картинки, вопроса и счётчика данными
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+        // включаем кнопки когда данные полученны
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
+        view.alpha = 1                          // прозрачный фон
+        activityIndicator.isHidden = true       //индикатор загрузки скрыт
     }
-    
+    /// Метод показа результата ответа
     private func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
@@ -94,14 +97,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             self.showNextQuestionOrResults()
         }
     }
-    
+    /// Метод показа следующего вопроса или результата игры
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
             guard let statisticService = statisticService else { return }
-                        statisticService.store(correct: correctAnswers, total: questionsAmount)
-                        let recordString = "\(statisticService.bestGame.correct)/\(statisticService.bestGame.total)"
-                        let accuracyString = "\(String(format: "%.2f", statisticService.totalAccuracy))%"
-                        let text = """
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            let recordString = "\(statisticService.bestGame.correct)/\(statisticService.bestGame.total)"
+            let accuracyString = "\(String(format: "%.2f", statisticService.totalAccuracy))%"
+            let text = """
                             Ваш результат: \(correctAnswers)/\(questionsAmount)
                             Количество сыгранных квизов: \(statisticService.gamesCount)
                             Рекорд: \(recordString)(\(statisticService.bestGame.date.dateTimeString))
@@ -112,25 +115,71 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                 message: text,
                 buttonText: "Сыграть еще раз") { [weak self] _ in
                     guard let self = self else { return }
-                    //после результатов рамка картинки исчезает
-                    self.imageView.layer.borderWidth = 0
-                    //обнуляем счетчик правильных ответов по итогу результатов
-                    self.correctAnswers = 0
+                    
+                    self.imageView.layer.borderWidth = 0        //после результатов рамка картинки исчезает
+                    
+                    self.correctAnswers = 0                     //обнуляем счетчик правильных ответов по итогу результатов
                     self.yesButton.isEnabled = true
                     self.noButton.isEnabled = true
                     self.currentQuestionIndex = 0
                     self.questionFactory?.requestNextQuestion()
                 }
-            alertResult?.createAlertController(from: alertModel)
+            guard let alertResult = alertResult else {return}   //распаковка результата алерта
+            alertResult.createAlertController(from: alertModel)
         } else {
             imageView.layer.borderWidth = 0
             currentQuestionIndex += 1
-            
+            activityIndicator.isHidden = false
             questionFactory?.requestNextQuestion()
-            //после отображения данных включаем кнопки
-            yesButton.isEnabled = true
-            noButton.isEnabled = true
         }
+    }
+    // MARK: - Network
+    //метод показа индикатора загрузки
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false      //показываем индикатор загрузки
+        activityIndicator.startAnimating()      //включаем анимацию
+    }
+    ///метод состояния ошибки при загрузке данных
+    private func showNetworkError(message: String) {
+
+        let alertModel = AlertModel(title: "Что-то пошло не так(",
+                                    message: message,
+                                    buttonText: "Попробовать еще раз") { [weak self] _ in
+            guard let self else { return }
+            self.imageView.layer.borderWidth = 0
+            self.correctAnswers = 0
+            self.yesButton.isEnabled = true
+            self.noButton.isEnabled = true
+            self.currentQuestionIndex = 0
+            self.questionFactory?.loadData()
+            self.view.alpha = 1
+        }
+        view.alpha = 0.6                        //прозрачность на 60%
+        guard let alertResult else { return }
+        alertResult.createAlertController(from: alertModel)
+    }
+    //данные с сервера загружены
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true   //скрываем индикатор загрузки
+        questionFactory?.requestNextQuestion()
+    }
+    //произошла ошибка загрузки данных
+    func didFailToLoadData(with error: Error) {
+        activityIndicator.isHidden = false
+        showNetworkError(message: "Невозможно загрузить данные")//error.localizedDescription)   //сообщение с описанием ошибки
+    }
+    //ошибка загрузки изображения
+    func failedToUploadImage(for quizQuestionIndex: Int) {
+        activityIndicator.isHidden = false
+        let alert = AlertModel(title: "Ошибка",
+                               message: "Не удалось загрузить изображение",
+                               buttonText: "Попробовать еще раз") { [weak self] _ in
+            guard let self else { return }
+            self.imageView.layer.borderWidth = 0
+            self.questionFactory?.requestNextQuestionByIndex(by: quizQuestionIndex)
+        }
+        view.alpha = 0.6            //прозрачность на 60%
+        alertResult?.createAlertController(from: alert)
     }
 }
 
