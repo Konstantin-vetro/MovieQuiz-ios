@@ -11,32 +11,30 @@ import Foundation
 struct NetworkClient {
     //сетевая ошибка
     private enum NetworkError: Error {
-    case codeError
+        case codeError
     }
     
     //метод запроса
     func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void) {
         //создаем запрос
         let request = URLRequest(url: url)
-        //обработка ответа
+        //обрабатываем ответ
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            //распоковка ошибки
+        //распаковываем ошибки
             if let error = error {
                 handler(.failure(error))
                 return
             }
-            //Проверка, что нам пришел успешный код ответа
-            if let response = response as? HTTPURLResponse,     //превращение в объект класса РЕЕЗГКДКуызщтыу
+        //Проверка, что нам пришел успешный код ответа
+            if let response = response as? HTTPURLResponse,     //превращаем в объект класса HTTPURLResponse
                response.statusCode < 200 || response.statusCode >= 300 {
                 handler(.failure(NetworkError.codeError))
                 return
             }
-            
-            //возвращаем данные
+        //возвращаем данные
             guard let data = data else { return }
             handler(.success(data))
         }
-        
         task.resume()
     }
 }
