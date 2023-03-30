@@ -6,6 +6,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,9 +19,9 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="12P-Kw-zQk">
-                                <rect key="frame" x="20" y="58" width="374" height="804"/>
+                                <rect key="frame" x="20" y="48" width="374" height="804"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" spacing="224" translatesAutoresizingMaskIntoConstraints="NO" id="az0-0w-Y3x">
+                                    <stackView opaque="NO" contentMode="scaleAspectFill" distribution="equalSpacing" spacing="200" translatesAutoresizingMaskIntoConstraints="NO" id="az0-0w-Y3x">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="23.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Вопрос:" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmD-do-2Ep" userLabel="Question Title Label">
@@ -48,15 +49,15 @@
                                         <rect key="frame" x="0.0" y="624.5" width="374" height="99.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Рейтинг этого фильма меньше, чем 5?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fv2-Dy-fTx" userLabel="Question Label">
-                                                <rect key="frame" x="20" y="20" width="334" height="59.5"/>
+                                                <rect key="frame" x="20" y="13" width="334" height="73.5"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Bold" family="YS Display" pointSize="23"/>
                                                 <color key="textColor" name="YP White"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="Fv2-Dy-fTx" secondAttribute="bottom" constant="20" id="DRp-jb-9sI"/>
-                                            <constraint firstItem="Fv2-Dy-fTx" firstAttribute="top" secondItem="PAY-fB-GbH" secondAttribute="top" constant="20" id="Ii3-Vv-Lw3"/>
+                                            <constraint firstAttribute="bottom" secondItem="Fv2-Dy-fTx" secondAttribute="bottom" constant="13" id="DRp-jb-9sI"/>
+                                            <constraint firstItem="Fv2-Dy-fTx" firstAttribute="top" secondItem="PAY-fB-GbH" secondAttribute="top" constant="13" id="Ii3-Vv-Lw3"/>
                                             <constraint firstItem="Fv2-Dy-fTx" firstAttribute="leading" secondItem="PAY-fB-GbH" secondAttribute="leading" constant="20" id="OSK-f6-0kg"/>
                                             <constraint firstAttribute="trailing" secondItem="Fv2-Dy-fTx" secondAttribute="trailing" constant="20" id="fuB-iG-Edt"/>
                                         </constraints>
@@ -105,16 +106,23 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="rbE-22-Tms">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                                <color key="color" systemColor="systemMintColor"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Background"/>
                         <constraints>
                             <constraint firstItem="12P-Kw-zQk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="aSr-77-o7w"/>
+                            <constraint firstItem="rbE-22-Tms" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gvg-e2-URp"/>
                             <constraint firstAttribute="trailing" secondItem="12P-Kw-zQk" secondAttribute="trailing" constant="20" id="gy6-AA-lI7"/>
-                            <constraint firstItem="12P-Kw-zQk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="xtw-kS-crW"/>
+                            <constraint firstItem="rbE-22-Tms" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lui-sa-txa"/>
+                            <constraint firstItem="12P-Kw-zQk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="xtw-kS-crW"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="rbE-22-Tms" id="Zbt-bJ-WlE"/>
                         <outlet property="counterLabel" destination="X7u-hf-98k" id="aTu-Sd-37V"/>
                         <outlet property="imageView" destination="aT0-OJ-XjC" id="E51-AG-nSl"/>
                         <outlet property="noButton" destination="Dev-XX-3X6" id="Oqp-cF-IjW"/>
@@ -137,5 +145,8 @@
         <namedColor name="YP White">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="systemMintColor">
+            <color red="0.0" green="0.7803921568627451" blue="0.74509803921568629" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>
