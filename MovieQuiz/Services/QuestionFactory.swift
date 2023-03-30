@@ -69,7 +69,7 @@ class QuestionFactory: QuestionFactoryProtocol {
     }
     //метод получения следующего вопроса
     func requestNextQuestion() {
-        //запускаем код в другом потоке
+        //запускаем код в параллельном потоке
         DispatchQueue.global().async { [weak self] in
             guard let self else { return }
             
@@ -94,7 +94,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         // проверка на корректность ответа
         let rating = Float(movie.rating) ?? 0
         
-        let text: String = "Рейтинг этого фильма больше, чем 9"
+        let text: String = "Рейтинг этого фильма больше, чем 9?"
         let correctAnswer = rating > 9
         
         //создание модели вопроса
