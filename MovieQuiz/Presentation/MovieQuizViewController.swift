@@ -23,7 +23,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var alertResult: AlertProtocol?
     //экземпляр класса statisticService
     private var statisticService: StatisticServiceProtocol?
-
+    // переменные отражающие свайпы подобно нажаниям кнопкам да - нет
+    private var yesSwipe: UISwipeGestureRecognizer?
+    private var noSwipe: UISwipeGestureRecognizer?
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,8 +35,45 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         alertResult = AlertPresenter(delegate: self)        // делегат алерта
         statisticService = StatisticServiceImplementation()
         questionFactory?.loadData()     //загрузка данных
+        swipeGestures()         // жесты
     }
     
+    // MARK: - Gesture swipes
+    /// данные жесты сделаны для теста на имеющемся IPhone 6s
+    /// если свайпнуть вправо это эквивалентно кнопке ДА
+    /// если свайпнуть влево то будет имитация кнопке НЕТ
+    private func swipeGestures() {
+        yesSwipe = UISwipeGestureRecognizer(target: self, action: #selector(correctSwipe))
+        noSwipe = UISwipeGestureRecognizer(target: self, action: #selector(incorrectSwipe))
+        noSwipe?.direction = .left
+        if let yesSwipe {
+            imageView.addGestureRecognizer(yesSwipe)
+        }
+        if let noSwipe {
+            imageView.addGestureRecognizer(noSwipe)
+        }
+        imageView.isUserInteractionEnabled = true
+    }
+    // обработка ответа Да жестом
+    @IBAction private func correctSwipe(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.state == .ended {
+            guard let currentQuestion = currentQuestion else { return }
+            let givenAnswer = true
+            showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        }
+    }
+    // обработка ответа Нет жестом
+    @IBAction private func incorrectSwipe(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.state == .ended {
+            guard let currentQuestion = currentQuestion else { return }
+            let givenAnswer = false
+            showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        }
+    }
+    // MARK: - StatusBar
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return.lightContent
+    }
     // MARK: - QuestionFactoryDelegate
 
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -56,6 +95,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let givenAnswer = true
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
+    
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         guard let currentQuestion = currentQuestion else { return }
         let givenAnswer = false
@@ -78,6 +118,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         // включаем кнопки когда данные полученны
         yesButton.isEnabled = true
         noButton.isEnabled = true
+        // жесты включены
+        yesSwipe?.isEnabled = true
+        noSwipe?.isEnabled = true
         view.alpha = 1                          // прозрачный фон
         activityIndicator.isHidden = true       //индикатор загрузки скрыт
     }
@@ -92,6 +135,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         //выключаем кнопки до начала смены вопроса, чтобы не было повторных нажатий
         yesButton.isEnabled = false
         noButton.isEnabled = false
+        // жесты выключены
+        yesSwipe?.isEnabled = false
+        noSwipe?.isEnabled = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
             self.showNextQuestionOrResults()
@@ -121,6 +167,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                     self.correctAnswers = 0                     //обнуляем счетчик правильных ответов по итогу результатов
                     self.yesButton.isEnabled = true
                     self.noButton.isEnabled = true
+                    // жесты включены
+                    self.yesSwipe?.isEnabled = true
+                    self.noSwipe?.isEnabled = true
                     self.currentQuestionIndex = 0
                     self.questionFactory?.requestNextQuestion()
                 }
