@@ -41,7 +41,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Gesture swipes
     /// данные жесты сделаны для теста на имеющемся IPhone 6s
     /// если свайпнуть вправо это эквивалентно кнопке ДА
-    /// если свайпнуть влево то будет имитация кнопке НЕТ
+    /// если свайпнуть влево то будет имитация кнопки НЕТ
     private func swipeGestures() {
         yesSwipe = UISwipeGestureRecognizer(target: self, action: #selector(correctSwipe))
         noSwipe = UISwipeGestureRecognizer(target: self, action: #selector(incorrectSwipe))

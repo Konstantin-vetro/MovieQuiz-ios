@@ -3,7 +3,6 @@
 //  MovieQuiz
 //
 
-
 import Foundation
 
 ///Делегаты фабрики вопросов

@@ -2,8 +2,6 @@
 //  NetworkClient.swift
 //  MovieQuiz
 //
-//  Created by Гость on 25.03.2023.
-//
 
 import Foundation
 
