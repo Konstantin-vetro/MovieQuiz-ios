@@ -5,8 +5,13 @@
 
 import Foundation
 
-///Модель, отвечающая  за загрузку данных по URL
-struct NetworkClient {
+// протокол для реализации тестов
+protocol NetworkRouting {
+    func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void)
+}
+
+// Модель, отвечающая  за загрузку данных по URL
+struct NetworkClient: NetworkRouting {
     //сетевая ошибка
     private enum NetworkError: Error {
         case codeError

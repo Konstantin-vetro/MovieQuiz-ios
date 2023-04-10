@@ -10,16 +10,21 @@ protocol MoviesLoadingProtocol {
 }
 //загрузчик фильмов
 struct MoviesLoader: MoviesLoadingProtocol {
-    // NetworkClient
-    private let networkClient = NetworkClient()
+    // MARK: - NetworkClient
+    private let networkClient: NetworkRouting
     
-    // URL
+    init(networkClient: NetworkRouting = NetworkClient()) {
+        self.networkClient = networkClient
+    }
+    // MARK: - key_imDb
+    private let keyImdb: String = "k_y4y8zf62"
+    // MARK: - URL
     private var mostPopularMoviesUrl: URL {
         // получаем API
-        let api = "https://imdb-api.com/en/API/Top250Movies/k_y4y8zf62"
+        let api = "https://imdb-api.com/en/API/Top250Movies/\(keyImdb)"
         //проверка на преобразование строки
         guard let url = URL(string: api) else {
-            preconditionFailure("Не удалось создать URL-адрес mostPopularMoviesUrl")
+            preconditionFailure("Не удалось создать URL-адрес Top250Movies")
         }
         return url
     }
