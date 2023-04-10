@@ -9,12 +9,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     // MARK: - Private variables
-    //индекс текущего вопроса
-    private var currentQuestionIndex: Int = 0
+    private let presenter = MovieQuizPresenter()
     //счетчик правильных ответов
     private var correctAnswers: Int = 0
-    //общее количество вопросов для квиза
-    private let questionsAmount: Int = 10
     //фабрика вопросов реализуется протоколом: менять на web здесь
     private var questionFactory: QuestionFactoryProtocol?
     //текущий вопрос
@@ -23,7 +20,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var alertResult: AlertProtocol?
     //экземпляр класса statisticService
     private var statisticService: StatisticServiceProtocol?
-    // переменные отражающие свайпы подобно нажаниям кнопкам да - нет
+    // переменные отражающие свайпы подобно нажатиям кнопкам да - нет
     private var yesSwipe: UISwipeGestureRecognizer?
     private var noSwipe: UISwipeGestureRecognizer?
     // MARK: - Lifecycle
@@ -39,9 +36,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     // MARK: - Gesture swipes
-    /// данные жесты сделаны для теста на имеющемся IPhone 6s
-    /// если свайпнуть вправо это эквивалентно кнопке ДА
-    /// если свайпнуть влево то будет имитация кнопки НЕТ
+    /// данные жесты сделаны для теста на имеющемся IPhone 6s,
+    /// учитывая, что кнопки не помещяются на экране
+    /// свайп вправо  эквивалентен кнопке ДА
+    /// свайп влево эквивалентен кнопке НЕТ
     private func swipeGestures() {
         yesSwipe = UISwipeGestureRecognizer(target: self, action: #selector(correctSwipe))
         noSwipe = UISwipeGestureRecognizer(target: self, action: #selector(incorrectSwipe))
@@ -79,7 +77,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else { return }
         currentQuestion = question
-        let viewModel = convert(model: question)
+        let viewModel = presenter.convert(model: question)
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
         }
@@ -89,7 +87,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     func presentAlertController(_ alertController: UIAlertController) {
         present(alertController, animated: true)        //показ алерта
     }
-    // MARK: - Actions
+    // MARK: - UI-Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         guard let currentQuestion = currentQuestion else { return }
         let givenAnswer = true
@@ -102,14 +100,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     // MARK: - Private functions
-    /// Метод конвертации
-    private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        return QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
-            question: model.text,
-            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)") // высчитываем номер вопроса
-    }
-    /// Метод показа модели
+    // Метод показа модели
     private func show(quiz step: QuizStepViewModel) {
         //заполнение картинки, вопроса и счётчика данными
         imageView.image = step.image
@@ -145,13 +136,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     /// Метод показа следующего вопроса или результата игры
     private func showNextQuestionOrResults() {
-        if currentQuestionIndex == questionsAmount - 1 {
+        if presenter.isLastQuestion() {
             guard let statisticService = statisticService else { return }
-            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
             let recordString = "\(statisticService.bestGame.correct)/\(statisticService.bestGame.total)"
             let accuracyString = "\(String(format: "%.2f", statisticService.totalAccuracy))%"
             let text = """
-                            Ваш результат: \(correctAnswers)/\(questionsAmount)
+                            Ваш результат: \(correctAnswers)/\(presenter.questionsAmount)
                             Количество сыгранных квизов: \(statisticService.gamesCount)
                             Рекорд: \(recordString)(\(statisticService.bestGame.date.dateTimeString))
                             Средняя точность: \(accuracyString)
@@ -170,14 +161,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                     // жесты включены
                     self.yesSwipe?.isEnabled = true
                     self.noSwipe?.isEnabled = true
-                    self.currentQuestionIndex = 0
+                    self.presenter.resetQuestionIndex()
                     self.questionFactory?.requestNextQuestion()
                 }
             guard let alertResult = alertResult else {return}   //распаковка результата алерта
             alertResult.createAlertController(from: alertModel)
         } else {
             imageView.layer.borderWidth = 0
-            currentQuestionIndex += 1
+            presenter.switchToNextQuestion()
             activityIndicator.isHidden = false
             questionFactory?.requestNextQuestion()
         }
@@ -199,7 +190,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             self.correctAnswers = 0
             self.yesButton.isEnabled = true
             self.noButton.isEnabled = true
-            self.currentQuestionIndex = 0
+            self.presenter.resetQuestionIndex()
             self.questionFactory?.loadData()
             self.view.alpha = 1
         }
