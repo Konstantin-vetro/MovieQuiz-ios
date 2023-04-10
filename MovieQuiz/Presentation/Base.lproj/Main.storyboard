@@ -19,13 +19,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="12P-Kw-zQk">
-                                <rect key="frame" x="20" y="48" width="374" height="804"/>
+                                <rect key="frame" x="20" y="58" width="374" height="804"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleAspectFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="az0-0w-Y3x">
+                                    <stackView opaque="NO" contentMode="scaleAspectFill" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="az0-0w-Y3x">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="23.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Вопрос:" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmD-do-2Ep" userLabel="Question Title Label">
-                                                <rect key="frame" x="0.0" y="0.0" width="313.5" height="23.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="76" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Medium" family="YS Display" pointSize="20"/>
                                                 <color key="textColor" name="YP White"/>
                                                 <nil key="highlightedColor"/>
@@ -51,15 +51,15 @@
                                         <rect key="frame" x="0.0" y="624.5" width="374" height="99.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Рейтинг этого фильма меньше, чем 5?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fv2-Dy-fTx" userLabel="Question Label">
-                                                <rect key="frame" x="20" y="13" width="334" height="73.5"/>
+                                                <rect key="frame" x="20" y="5" width="334" height="89.5"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Bold" family="YS Display" pointSize="23"/>
                                                 <color key="textColor" name="YP White"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="Fv2-Dy-fTx" secondAttribute="bottom" constant="13" id="DRp-jb-9sI"/>
-                                            <constraint firstItem="Fv2-Dy-fTx" firstAttribute="top" secondItem="PAY-fB-GbH" secondAttribute="top" constant="13" id="Ii3-Vv-Lw3"/>
+                                            <constraint firstAttribute="bottom" secondItem="Fv2-Dy-fTx" secondAttribute="bottom" constant="5" id="DRp-jb-9sI"/>
+                                            <constraint firstItem="Fv2-Dy-fTx" firstAttribute="top" secondItem="PAY-fB-GbH" secondAttribute="top" constant="5" id="Ii3-Vv-Lw3"/>
                                             <constraint firstItem="Fv2-Dy-fTx" firstAttribute="leading" secondItem="PAY-fB-GbH" secondAttribute="leading" constant="20" id="OSK-f6-0kg"/>
                                             <constraint firstAttribute="trailing" secondItem="Fv2-Dy-fTx" secondAttribute="trailing" constant="20" id="fuB-iG-Edt"/>
                                         </constraints>
@@ -120,9 +120,9 @@
                         <constraints>
                             <constraint firstItem="12P-Kw-zQk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="aSr-77-o7w"/>
                             <constraint firstItem="rbE-22-Tms" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gvg-e2-URp"/>
-                            <constraint firstAttribute="trailing" secondItem="12P-Kw-zQk" secondAttribute="trailing" constant="20" id="gy6-AA-lI7"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="12P-Kw-zQk" secondAttribute="trailing" constant="20" id="gy6-AA-lI7"/>
                             <constraint firstItem="rbE-22-Tms" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lui-sa-txa"/>
-                            <constraint firstItem="12P-Kw-zQk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="xtw-kS-crW"/>
+                            <constraint firstItem="12P-Kw-zQk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="xtw-kS-crW"/>
                         </constraints>
                     </view>
                     <connections>
