@@ -17,6 +17,7 @@ class AlertPresenter: AlertProtocol {
     func createAlertController(from alert: AlertModel) {
         //создаем alertController
         let alertController = UIAlertController(title: alert.title, message: alert.message, preferredStyle: .alert)
+        alertController.view.accessibilityIdentifier = "Game results"     //identifier for tests
         //создаем actionController
         let alertAction = UIAlertAction(title: alert.buttonText, style: .default, handler: alert.completion)
         //связываем alert и action
