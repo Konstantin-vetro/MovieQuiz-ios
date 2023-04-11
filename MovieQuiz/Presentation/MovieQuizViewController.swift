@@ -26,6 +26,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewController = self
         imageView.layer.cornerRadius = 20   //скругление углов изображения по радиусу 20
         showLoadingIndicator()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)   //делегат фабрики вопросов
@@ -55,17 +56,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // обработка ответа Да жестом
     @IBAction private func correctSwipe(_ gesture: UISwipeGestureRecognizer) {
         if gesture.state == .ended {
-            guard let currentQuestion = currentQuestion else { return }
-            let givenAnswer = true
-            showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+            presenter.currentQuestion = currentQuestion
+            presenter.yesButtonClicked()
         }
     }
     // обработка ответа Нет жестом
     @IBAction private func incorrectSwipe(_ gesture: UISwipeGestureRecognizer) {
         if gesture.state == .ended {
-            guard let currentQuestion = currentQuestion else { return }
-            let givenAnswer = false
-            showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+            presenter.currentQuestion = currentQuestion
+            presenter.noButtonClicked()
         }
     }
     // MARK: - StatusBar
@@ -89,15 +88,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     // MARK: - UI-Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else { return }
-        let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        presenter.currentQuestion = currentQuestion
+        presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else { return }
-        let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        presenter.currentQuestion = currentQuestion
+        presenter.noButtonClicked()
     }
     // MARK: - Private functions
     // Метод показа модели
@@ -116,7 +113,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         activityIndicator.isHidden = true       //индикатор загрузки скрыт
     }
     /// Метод показа результата ответа
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
         }
