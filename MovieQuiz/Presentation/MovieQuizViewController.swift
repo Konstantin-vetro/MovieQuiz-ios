@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertDelegate {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     // MARK: - UI-Outlets
     @IBOutlet weak var yesButton: UIButton!
     @IBOutlet weak var noButton: UIButton!
@@ -8,32 +8,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
-    // MARK: - Private variables
-    private let presenter = MovieQuizPresenter()
-    //счетчик правильных ответов
-    private var correctAnswers: Int = 0
-    //фабрика вопросов реализуется протоколом: менять на web здесь
-    private var questionFactory: QuestionFactoryProtocol?
-    //текущий вопрос
-    private var currentQuestion: QuizQuestion?
-    //алерт результата текущей игры
-    private var alertResult: AlertProtocol?
-    //экземпляр класса statisticService
-    private var statisticService: StatisticServiceProtocol?
-    // переменные отражающие свайпы подобно нажатиям кнопкам да - нет
+    
+    // MARK: - Swipes
     private var yesSwipe: UISwipeGestureRecognizer?
     private var noSwipe: UISwipeGestureRecognizer?
+    
+    // MARK: - Presenter
+    private var presenter: MovieQuizPresenter!
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewController = self
+        presenter = MovieQuizPresenter(viewController: self)
         imageView.layer.cornerRadius = 20   //скругление углов изображения по радиусу 20
-        showLoadingIndicator()
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)   //делегат фабрики вопросов
-        alertResult = AlertPresenter(delegate: self)        // делегат алерта
-        statisticService = StatisticServiceImplementation()
-        questionFactory?.loadData()     //загрузка данных
-        swipeGestures()         // жесты
+        swipeGestures()
     }
     
     // MARK: - Gesture swipes
@@ -41,6 +29,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     /// учитывая, что кнопки не помещяются на экране
     /// свайп вправо  эквивалентен кнопке ДА
     /// свайп влево эквивалентен кнопке НЕТ
+
     private func swipeGestures() {
         yesSwipe = UISwipeGestureRecognizer(target: self, action: #selector(correctSwipe))
         noSwipe = UISwipeGestureRecognizer(target: self, action: #selector(incorrectSwipe))
@@ -53,52 +42,36 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         }
         imageView.isUserInteractionEnabled = true
     }
-    // обработка ответа Да жестом
-    @IBAction private func correctSwipe(_ gesture: UISwipeGestureRecognizer) {
+    
+    @IBAction private func correctSwipe(_ gesture: UISwipeGestureRecognizer) {  // обработка ответа Да жестом
         if gesture.state == .ended {
-            presenter.currentQuestion = currentQuestion
             presenter.yesButtonClicked()
         }
     }
-    // обработка ответа Нет жестом
-    @IBAction private func incorrectSwipe(_ gesture: UISwipeGestureRecognizer) {
+    
+    @IBAction private func incorrectSwipe(_ gesture: UISwipeGestureRecognizer) {    // обработка ответа Нет жестом
         if gesture.state == .ended {
-            presenter.currentQuestion = currentQuestion
             presenter.noButtonClicked()
         }
     }
+    
     // MARK: - StatusBar
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return.lightContent
     }
-    // MARK: - QuestionFactoryDelegate
-
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else { return }
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
-    }
-    // MARK: - AlertDelegate
     
-    func presentAlertController(_ alertController: UIAlertController) {
-        present(alertController, animated: true)        //показ алерта
-    }
     // MARK: - UI-Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.noButtonClicked()
     }
-    // MARK: - Private functions
-    // Метод показа модели
-    private func show(quiz step: QuizStepViewModel) {
+    
+    // MARK: - Functions show
+    func show(quiz step: QuizStepViewModel) {       // Метод показа модели
+        imageView.layer.borderColor = UIColor.clear.cgColor
         //заполнение картинки, вопроса и счётчика данными
         imageView.image = step.image
         textLabel.text = step.question
@@ -110,113 +83,64 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         yesSwipe?.isEnabled = true
         noSwipe?.isEnabled = true
         view.alpha = 1                          // прозрачный фон
-        activityIndicator.isHidden = true       //индикатор загрузки скрыт
+        hideLoadingIndicator()
     }
-    /// Метод показа результата ответа
-    func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            correctAnswers += 1
+    
+    func show(quiz result: QuizResultsViewModel) {      // метод показа результата
+        let message = presenter.makeResultMessage()
+        
+        let alert = UIAlertController(title: result.title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.presenter.restartGame()
         }
+        alert.addAction(action)
+        alert.view.accessibilityIdentifier = "Game results"
+        self.present(alert, animated: true, completion: nil)
+    }
+    // MARK: - Auxiliary functions
+    func highlightImageBorder(isCorrectAnswer: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
-        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        //выключаем кнопки до начала смены вопроса, чтобы не было повторных нажатий
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+    }
+    // выключение кнопок
+    func buttonsIsNotEnabled() {
         yesButton.isEnabled = false
         noButton.isEnabled = false
-        // жесты выключены
         yesSwipe?.isEnabled = false
         noSwipe?.isEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-            self.showNextQuestionOrResults()
-        }
     }
-    /// Метод показа следующего вопроса или результата игры
-    private func showNextQuestionOrResults() {
-        if presenter.isLastQuestion() {
-            guard let statisticService = statisticService else { return }
-            statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
-            let recordString = "\(statisticService.bestGame.correct)/\(statisticService.bestGame.total)"
-            let accuracyString = "\(String(format: "%.2f", statisticService.totalAccuracy))%"
-            let text = """
-                            Ваш результат: \(correctAnswers)/\(presenter.questionsAmount)
-                            Количество сыгранных квизов: \(statisticService.gamesCount)
-                            Рекорд: \(recordString)(\(statisticService.bestGame.date.dateTimeString))
-                            Средняя точность: \(accuracyString)
-                        """
-            let alertModel = AlertModel(
-                title: "Этот раунд окончен!",
-                message: text,
-                buttonText: "Сыграть еще раз") { [weak self] _ in
-                    guard let self = self else { return }
-                    
-                    self.imageView.layer.borderWidth = 0        //после результатов рамка картинки исчезает
-                    
-                    self.correctAnswers = 0                     //обнуляем счетчик правильных ответов по итогу результатов
-                    self.yesButton.isEnabled = true
-                    self.noButton.isEnabled = true
-                    // жесты включены
-                    self.yesSwipe?.isEnabled = true
-                    self.noSwipe?.isEnabled = true
-                    self.presenter.resetQuestionIndex()
-                    self.questionFactory?.requestNextQuestion()
-                }
-            guard let alertResult = alertResult else {return}   //распаковка результата алерта
-            alertResult.createAlertController(from: alertModel)
-        } else {
-            imageView.layer.borderWidth = 0
-            presenter.switchToNextQuestion()
-            activityIndicator.isHidden = false
-            questionFactory?.requestNextQuestion()
-        }
+    // показ индикатора загрузки
+    func showLoadingIndicator() {
+        activityIndicator.isHidden = false      
+        activityIndicator.startAnimating()
+    }
+    // скрытие индикатора загрузки
+    func hideLoadingIndicator() {
+        activityIndicator.isHidden = true
+    }
+    // прозрачность фона на 60 %
+    func backgroundTransparency() {
+        view.alpha = 0.6
     }
     // MARK: - Network
-    //метод показа индикатора загрузки
-    private func showLoadingIndicator() {
-        activityIndicator.isHidden = false      //показываем индикатор загрузки
-        activityIndicator.startAnimating()      //включаем анимацию
-    }
-    ///метод состояния ошибки при загрузке данных
-    private func showNetworkError(message: String) {
-
-        let alertModel = AlertModel(title: "Что-то пошло не так(",
-                                    message: message,
-                                    buttonText: "Попробовать еще раз") { [weak self] _ in
+    // метод состояния ошибки при загрузке данных
+    func showNetworkError(message: String) {
+        //hideLoadingIndicator()
+        //backgroundTransparency()        // прозрачность на 60%
+       
+        let alert = UIAlertController(title: "Что-то пошло не так(",
+                                      message: message,
+                                      preferredStyle: .alert)
+        let action = UIAlertAction(title: "Попробовать еще раз", style: .default) { [weak self] _ in
             guard let self else { return }
-            self.imageView.layer.borderWidth = 0
-            self.correctAnswers = 0
-            self.yesButton.isEnabled = true
-            self.noButton.isEnabled = true
-            self.presenter.resetQuestionIndex()
-            self.questionFactory?.loadData()
-            self.view.alpha = 1
+            self.presenter.loadData()
         }
-        view.alpha = 0.6                        //прозрачность на 60%
-        guard let alertResult else { return }
-        alertResult.createAlertController(from: alertModel)
-    }
-    //данные с сервера загружены
-    func didLoadDataFromServer() {
-        activityIndicator.isHidden = true   //скрываем индикатор загрузки
-        questionFactory?.requestNextQuestion()
-    }
-    //произошла ошибка загрузки данных
-    func didFailToLoadData(with error: Error) {
-        activityIndicator.isHidden = false
-        showNetworkError(message: "Невозможно загрузить данные")//error.localizedDescription)   //сообщение с описанием ошибки
-    }
-    //ошибка загрузки изображения
-    func failedToUploadImage(for quizQuestionIndex: Int) {
-        activityIndicator.isHidden = false
-        let alert = AlertModel(title: "Ошибка",
-                               message: "Не удалось загрузить изображение",
-                               buttonText: "Попробовать еще раз") { [weak self] _ in
-            guard let self else { return }
-            self.imageView.layer.borderWidth = 0
-            self.questionFactory?.requestNextQuestionByIndex(by: quizQuestionIndex)
-        }
-        view.alpha = 0.6            //прозрачность на 60%
-        alertResult?.createAlertController(from: alert)
+        alert.addAction(action)
+        self.present(alert, animated: true)
     }
 }
 
