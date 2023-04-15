@@ -12,15 +12,19 @@ protocol MovieQuizViewControllerProtocol: AnyObject {
     func highlightImageBorder(isCorrectAnswer: Bool)
     
     func showLoadingIndicator()
+    func buttonsIsNotEnabled()
     func hideLoadingIndicator()
     
+    func backgroundTransparency()
     func showNetworkError(message: String)
+    
+    func present(_ alertController: UIAlertController)
 }
 
 final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
     // MARK: - private variables
     private var questionFactory: QuestionFactoryProtocol?   // фабрика вопросов
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private let statisticService: StatisticServiceProtocol! //экземпляр класса statisticService
     private var alertResult: AlertPresenter?
     
@@ -29,7 +33,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
     private var currentQuestion: QuizQuestion? // текущий вопрос
     private var correctAnswers: Int = 0 // счетчик правильных вопросов
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
@@ -51,7 +55,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
     // MARK: - AlertDelegate
     func presentAlertController(_ alertController: UIAlertController) {
         guard let viewController else { return }
-        viewController.present(alertController, animated: true)        //показ алерта
+        viewController.present(alertController)        //показ алерта
     }
     
     func isLastQuestion() -> Bool {
@@ -172,9 +176,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
 //
 //        alert.addAction(action)
 //
-//        viewController?.present(alert, animated: true)
+//        viewController?.present(alert)
         
-        let alertModel = AlertModel(title: "Hello", message: "World", buttonText: "OK") { [weak self] _ in
+        let alertModel = AlertModel(title: "Ошибка", message: "Не удалось загрузить изображение", buttonText: "Попробовать еще раз") { [weak self] _ in
             guard let self else { return }
             self.questionFactory?.requestNextQuestionByIndex(by: quizQuestionIndex)
         }
