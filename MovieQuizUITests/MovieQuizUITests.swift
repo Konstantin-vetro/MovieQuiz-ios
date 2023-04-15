@@ -63,7 +63,7 @@ final class MovieQuizUITests: XCTestCase {
         XCTAssertNotEqual(firstPosterData, secondPosterData)
         XCTAssertEqual(indexLabel.label, "2/10")
     }
-    // тест на свайпы, jп окончании которго должен показаться первый вопрос
+    // тест на свайпы, по окончании которго должен показаться первый вопрос
     func testSwipesRightOrLeft() {
         sleep(2)
         let posterImage = app.images["Poster"]
