@@ -25,7 +25,6 @@ class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     
     func showNetworkError(message: String) { }
 }
-
 final class MovieQuizPresenterTests: XCTestCase {
     func testPresenterConvertModel() throws {
         let viewControllerMock = MovieQuizViewControllerMock()
