@@ -2,8 +2,8 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     // MARK: - UI-Outlets
-    @IBOutlet weak var yesButton: UIButton!
-    @IBOutlet weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
@@ -98,7 +98,12 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         }
         alert.addAction(action)
         alert.view.accessibilityIdentifier = "Game results"
-        self.present(alert, animated: true, completion: nil)
+        self.present(alert)
+        //self.present(alert, animated: true, completion: nil)
+    }
+    // MARK: - presentAlertController
+    func present(_ alertController: UIAlertController) {
+        self.present(alertController, animated: true)        //показ алерта
     }
     // MARK: - Auxiliary functions
     func highlightImageBorder(isCorrectAnswer: Bool) {
@@ -115,8 +120,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     // показ индикатора загрузки
     func showLoadingIndicator() {
-        activityIndicator.isHidden = false      
-        activityIndicator.startAnimating()
+        activityIndicator?.isHidden = false      
+        activityIndicator?.startAnimating()
     }
     // скрытие индикатора загрузки
     func hideLoadingIndicator() {
@@ -129,9 +134,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     // MARK: - Network
     // метод состояния ошибки при загрузке данных
     func showNetworkError(message: String) {
-        //hideLoadingIndicator()
-        //backgroundTransparency()        // прозрачность на 60%
-       
+      
         let alert = UIAlertController(title: "Что-то пошло не так(",
                                       message: message,
                                       preferredStyle: .alert)
@@ -140,7 +143,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
             self.presenter.loadData()
         }
         alert.addAction(action)
-        self.present(alert, animated: true)
+        self.present(alert)
     }
 }
 
