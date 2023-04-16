@@ -2,14 +2,17 @@
 //  NetworkClient.swift
 //  MovieQuiz
 //
-//  Created by Гость on 25.03.2023.
-//
 
 import Foundation
 
-///Модель, отвечающая  за загрузку данных по URL
-struct NetworkClient {
-    //сетевая ошибка
+// протокол для реализации тестов
+protocol NetworkRouting {
+    func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void)
+}
+
+// Модель, отвечающая  за загрузку данных по URL
+struct NetworkClient: NetworkRouting {
+    
     private enum NetworkError: Error {
         case codeError
     }

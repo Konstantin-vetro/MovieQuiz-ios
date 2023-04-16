@@ -4,15 +4,15 @@
 //
 //сущность для взаимодействия с UserDefaults
 import Foundation
-//модель одной игры
+// модель рекорда игры
 struct GameRecord: Codable {
     let correct: Int
     let total: Int
     let date: Date
 }
-//расширение методом сравнения с помощью протокола Comparable
+
 extension GameRecord: Comparable {
-    //метод сравнения рекордов
+    //метод сравнения рекордов с помощью протокола Comparable
     static func < (lhs: GameRecord, rhs: GameRecord) -> Bool {
         return lhs.correct < rhs.correct
     }
@@ -21,7 +21,6 @@ extension GameRecord: Comparable {
 final class StatisticServiceImplementation: StatisticServiceProtocol {
     private let userDefaults = UserDefaults.standard
 
-    //Ключи
     private enum Keys: String {
         case correct, total, bestGame, gamesCount
     }
@@ -76,11 +75,8 @@ final class StatisticServiceImplementation: StatisticServiceProtocol {
     
     //метод для сохранения текущего результата игры
     func store(correct count: Int, total amount: Int) {
-        //увеличиваем счетчик счетчик количества игр
         gamesCount += 1
-        //увеличиваем счетчик правильынх вопросов для totalAccuracy
         correct += count
-        //увеличиваем счетчик верных ответов
         total += amount
         //сравнение для сохранения лучшего результата в userDefaults
         if bestGame.correct < count {

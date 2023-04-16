@@ -2,8 +2,6 @@
 //  AlertModel.swift
 //  MovieQuiz
 //
-//  Created by Гость on 12.03.2023.
-//
 
 import Foundation
 import UIKit
