@@ -2,8 +2,6 @@
 //  MostPopularMovies.swift
 //  MovieQuiz
 //
-//  Created by Гость on 25.03.2023.
-//
 
 import Foundation
 
@@ -22,8 +20,9 @@ struct MostPopularMovie: Codable {
         case rating = "imDbRating"
         case imageURL = "image"
     }
+    // делает изображение хорошего качества
     var resizedImageURL: URL {
-        // создаем строку из адреса
+        
         let urlString = imageURL.absoluteString
         // обрезаем лишнюю часть и добавляем модификатор желаемого качества
         let imageUrlString = urlString.components(separatedBy: "._") [0] + ".V0_UX600_.jpg"

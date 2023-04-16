@@ -6,7 +6,7 @@
 import XCTest
 @testable import MovieQuiz
 
-class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
+final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func present(_ alertController: UIAlertController) { }
     
     func show(quiz step: QuizStepViewModel) { }
@@ -15,7 +15,7 @@ class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     
     func highlightImageBorder(isCorrectAnswer: Bool) { }
     
-    func buttonsIsNotEnabled() { }
+    func setButtonsEnabled(isEnable: Bool) { }
     
     func showLoadingIndicator() { }
     

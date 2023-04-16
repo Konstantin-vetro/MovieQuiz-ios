@@ -59,7 +59,7 @@ struct StubNetworkClient: NetworkRouting {
     }
 }
 
-class MoviesLoaderTests: XCTestCase {
+final class MoviesLoaderTests: XCTestCase {
     // тест для проверки успешной загрузки
     func testSuccessLoading() throws {
         // Given

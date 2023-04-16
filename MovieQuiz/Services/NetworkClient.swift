@@ -12,7 +12,7 @@ protocol NetworkRouting {
 
 // Модель, отвечающая  за загрузку данных по URL
 struct NetworkClient: NetworkRouting {
-    //сетевая ошибка
+    
     private enum NetworkError: Error {
         case codeError
     }

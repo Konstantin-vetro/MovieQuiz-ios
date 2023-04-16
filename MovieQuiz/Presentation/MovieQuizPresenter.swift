@@ -5,22 +5,6 @@
 
 import UIKit
 
-protocol MovieQuizViewControllerProtocol: AnyObject {
-    func show(quiz step: QuizStepViewModel)
-    func show(quiz result: QuizResultsViewModel)
-    
-    func highlightImageBorder(isCorrectAnswer: Bool)
-    
-    func showLoadingIndicator()
-    func buttonsIsNotEnabled()
-    func hideLoadingIndicator()
-    
-    func backgroundTransparency()
-    func showNetworkError(message: String)
-    
-    func present(_ alertController: UIAlertController)
-}
-
 final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
     // MARK: - private variables
     private var questionFactory: QuestionFactoryProtocol?   // фабрика вопросов
@@ -107,7 +91,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate, AlertDelegate {
 
     // Метод показа результата ответа
     private func proceedWithAnswer(isCorrect: Bool) {
-        viewController?.buttonsIsNotEnabled()   // выключение кнопок и жестов
+        viewController?.setButtonsEnabled(isEnable: false)   // выключение кнопок и жестов
         didAnswer(isCorrectAnswer: isCorrect)
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in

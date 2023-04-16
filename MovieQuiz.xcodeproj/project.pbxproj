@@ -13,6 +13,7 @@
 		061DA80229BE53ED0005C12B /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061DA80129BE53ED0005C12B /* AlertPresenter.swift */; };
 		061DA80429BE59380005C12B /* AlertDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061DA80329BE59380005C12B /* AlertDelegate.swift */; };
 		061DA80629BE60A00005C12B /* AlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061DA80529BE60A00005C12B /* AlertProtocol.swift */; };
+		0620893129EBC8D2003F4AD9 /* MovieQuizPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069ED04929E875AE00950E56 /* MovieQuizPresenterTests.swift */; };
 		064471C629BD01CE00D1CD4C /* QuestionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064471C529BD01CE00D1CD4C /* QuestionFactory.swift */; };
 		064471C929BD05E500D1CD4C /* QuizStepViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064471C829BD05E500D1CD4C /* QuizStepViewModel.swift */; };
 		064471CB29BD060400D1CD4C /* QuizResultsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064471CA29BD060400D1CD4C /* QuizResultsViewModel.swift */; };
@@ -23,7 +24,6 @@
 		069ED02F29DF445E00950E56 /* MoviesLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069ED02E29DF445E00950E56 /* MoviesLoaderTests.swift */; };
 		069ED03729E0872B00950E56 /* MovieQuizUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069ED03629E0872B00950E56 /* MovieQuizUITests.swift */; };
 		069ED04229E4A91C00950E56 /* MovieQuizPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069ED04129E4A91C00950E56 /* MovieQuizPresenter.swift */; };
-		069ED04A29E875AE00950E56 /* MovieQuizPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069ED04929E875AE00950E56 /* MovieQuizPresenterTests.swift */; };
 		06A881C029C4DB1700BF002C /* StatisticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A881BF29C4DB1700BF002C /* StatisticService.swift */; };
 		06A881C229C5134C00BF002C /* StatisticServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A881C129C5134C00BF002C /* StatisticServiceProtocol.swift */; };
 		06A881C429CE481600BF002C /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A881C329CE481500BF002C /* NetworkClient.swift */; };
@@ -168,6 +168,7 @@
 			children = (
 				069ED02C29DF3F1700950E56 /* ArrayTests.swift */,
 				069ED02E29DF445E00950E56 /* MoviesLoaderTests.swift */,
+				069ED04929E875AE00950E56 /* MovieQuizPresenterTests.swift */,
 			);
 			path = MovieQuizTests;
 			sourceTree = "<group>";
@@ -178,14 +179,6 @@
 				069ED03629E0872B00950E56 /* MovieQuizUITests.swift */,
 			);
 			path = MovieQuizUITests;
-			sourceTree = "<group>";
-		};
-		069ED04829E875AD00950E56 /* MovieQuizViewControllerMock */ = {
-			isa = PBXGroup;
-			children = (
-				069ED04929E875AE00950E56 /* MovieQuizPresenterTests.swift */,
-			);
-			path = MovieQuizViewControllerMock;
 			sourceTree = "<group>";
 		};
 		8F4738322848DE2A005DF65E /* Presentation */ = {
@@ -217,7 +210,6 @@
 				AD1ABAB02831907B00B3E448 /* MovieQuiz */,
 				069ED02429DF365E00950E56 /* MovieQuizTests */,
 				069ED03529E0872B00950E56 /* MovieQuizUITests */,
-				069ED04829E875AD00950E56 /* MovieQuizViewControllerMock */,
 				AD1ABAAF2831907B00B3E448 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -422,6 +414,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				069ED02D29DF3F1800950E56 /* ArrayTests.swift in Sources */,
+				0620893129EBC8D2003F4AD9 /* MovieQuizPresenterTests.swift in Sources */,
 				069ED02F29DF445E00950E56 /* MoviesLoaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,7 +431,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				069ED04A29E875AE00950E56 /* MovieQuizPresenterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,7 +757,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = konstantin.MovieQuiz;
+				PRODUCT_BUNDLE_IDENTIFIER = konstantin.vetro.MovieQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -798,7 +790,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = konstantin.MovieQuiz;
+				PRODUCT_BUNDLE_IDENTIFIER = konstantin.vetro.MovieQuiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

@@ -1,5 +1,22 @@
 import UIKit
 
+// протокол для тестов
+protocol MovieQuizViewControllerProtocol: AnyObject {
+    func show(quiz step: QuizStepViewModel)
+    func show(quiz result: QuizResultsViewModel)
+    
+    func highlightImageBorder(isCorrectAnswer: Bool)
+    
+    func showLoadingIndicator()
+    func setButtonsEnabled(isEnable: Bool)
+    func hideLoadingIndicator()
+    
+    func backgroundTransparency()
+    func showNetworkError(message: String)
+    
+    func present(_ alertController: UIAlertController)
+}
+
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     // MARK: - UI-Outlets
     @IBOutlet private weak var yesButton: UIButton!
@@ -77,11 +94,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
         // включаем кнопки когда данные полученны
-        yesButton.isEnabled = true
-        noButton.isEnabled = true
-        // жесты включены
-        yesSwipe?.isEnabled = true
-        noSwipe?.isEnabled = true
+        setButtonsEnabled(isEnable: true)
         view.alpha = 1                          // прозрачный фон
         hideLoadingIndicator()
     }
@@ -99,11 +112,10 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         alert.addAction(action)
         alert.view.accessibilityIdentifier = "Game results"
         self.present(alert)
-        //self.present(alert, animated: true, completion: nil)
     }
     // MARK: - presentAlertController
     func present(_ alertController: UIAlertController) {
-        self.present(alertController, animated: true)        //показ алерта
+        self.present(alertController, animated: true)
     }
     // MARK: - Auxiliary functions
     func highlightImageBorder(isCorrectAnswer: Bool) {
@@ -111,21 +123,21 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
-    // выключение кнопок
-    func buttonsIsNotEnabled() {
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
-        yesSwipe?.isEnabled = false
-        noSwipe?.isEnabled = false
+    // включение/выключение кнопок/жестов
+    func setButtonsEnabled(isEnable: Bool) {
+        yesButton.isEnabled = isEnable
+        noButton.isEnabled = isEnable
+        yesSwipe?.isEnabled = isEnable
+        noSwipe?.isEnabled = isEnable
     }
     // показ индикатора загрузки
     func showLoadingIndicator() {
-        activityIndicator?.isHidden = false      
+        activityIndicator?.hidesWhenStopped = true
         activityIndicator?.startAnimating()
     }
     // скрытие индикатора загрузки
     func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
     }
     // прозрачность фона на 60 %
     func backgroundTransparency() {
@@ -146,67 +158,3 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         self.present(alert)
     }
 }
-
-/*
- Mock-данные
- 
- 
- Картинка: The Godfather
- Настоящий рейтинг: 9,2
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Dark Knight
- Настоящий рейтинг: 9
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Kill Bill
- Настоящий рейтинг: 8,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Avengers
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Deadpool
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Green Knight
- Настоящий рейтинг: 6,6
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Old
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: The Ice Age Adventures of Buck Wild
- Настоящий рейтинг: 4,3
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Tesla
- Настоящий рейтинг: 5,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Vivarium
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- */
