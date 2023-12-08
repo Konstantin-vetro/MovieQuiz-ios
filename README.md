@@ -2,8 +2,9 @@
 
 MovieQuiz - это приложение с квизами о фильмах из топ-250 рейтинга и самых популярных фильмах по версии IMDb.
 
-![6 (375x812)](https://github.com/Konstantin-vetro/MovieQuiz-ios/assets/124914005/d244f40e-86ac-4939-b3ca-3dfb39c0de3c)
-![8 (375x812)](https://github.com/Konstantin-vetro/MovieQuiz-ios/assets/124914005/092288a8-485a-40d9-91ec-57bc9234fcc3)
+![2 (375x812)](https://github.com/Konstantin-vetro/MovieQuiz-ios/assets/124914005/a79f118a-6343-437b-97e0-31398302a440)
+![6 (375x812)](https://github.com/Konstantin-vetro/MovieQuiz-ios/assets/124914005/393e55fb-adf5-49ac-bb34-d574cb34882d)
+![8 (375x812)](https://github.com/Konstantin-vetro/MovieQuiz-ios/assets/124914005/1224ef1f-df3b-4633-8917-2b21b4c0020e)
 
 ## **Ссылки**
 
